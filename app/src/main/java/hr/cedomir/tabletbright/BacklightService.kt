@@ -74,8 +74,10 @@ class BacklightService : Service() {
     }
 
     private fun publishDiscovery() {
-        val payload = """{"name":"Tablet Backlight","unique_id":"tablet_backlight_agent","command_topic":"$base/set","state_topic":"$base/state","availability_topic":"$base/available","payload_available":"online","payload_not_available":"offline","brightness":true,"brightness_scale":255,"schema":"json","command_template":"{{ value_json.brightness }}","state_value_template":"{{ value_json.brightness }}","device":{"identifiers":["tablet_backlight_agent"],"name":"Tablet Backlight Agent"}}"""
-        // Discovery is intentionally deferred to v0.2; raw brightness topics work in v0.1.
+        // Brightness-only MQTT light. HA sends a plain 0..255 value to /set,
+        // exactly like the v0.1 protocol that has already been verified on the tablet.
+        val payload = """{"name":"Tablet Backlight","unique_id":"tablet_backlight_agent","command_topic":"$base/set","state_topic":"$base/state","availability_topic":"$base/available","payload_available":"online","payload_not_available":"offline","brightness_command_topic":"$base/set","brightness_state_topic":"$base/state","brightness_scale":255,"on_command_type":"brightness","device":{"identifiers":["tablet_backlight_agent"],"name":"Tablet Backlight Agent","manufacturer":"Custom","model":"HA Backlight Agent"}}"""
+        publish("homeassistant/light/tablet_backlight_agent/config", payload, true)
     }
 
     private fun publish(topic: String, text: String, retain: Boolean) {
