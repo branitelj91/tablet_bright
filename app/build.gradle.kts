@@ -11,8 +11,8 @@ android {
         applicationId = "hr.cedomir.tabletbright"
         minSdk = 26
         targetSdk = 28
-        versionCode = 1
-        versionName = "0.1.0"
+        versionCode = 10
+        versionName = "1.0"
     }
 
     compileOptions {
