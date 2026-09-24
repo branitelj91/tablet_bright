@@ -36,6 +36,10 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
+    lint {
+        disable += "ExpiredTargetSdkVersion"
+    }
+
     packaging {
         resources {
             excludes += setOf(
