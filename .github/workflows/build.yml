@@ -23,11 +23,23 @@ jobs:
         with:
           gradle-version: '8.9'
 
-      - name: Build debug APK
-        run: gradle :app:assembleDebug --stacktrace
+      - name: Restore release keystore
+        shell: bash
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+        run: |
+          printf '%s' "$KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/tablet-backlight-release.jks"
 
-      - name: Upload APK
+      - name: Build signed release APK
+        env:
+          RELEASE_STORE_FILE: ${{ runner.temp }}/tablet-backlight-release.jks
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: gradle :app:assembleRelease --stacktrace
+
+      - name: Upload signed release APK
         uses: actions/upload-artifact@v4
         with:
-          name: HA-Backlight-Agent-v0.1-debug
-          path: app/build/outputs/apk/debug/app-debug.apk
+          name: HA-Backlight-Agent-v1.0-release
+          path: app/build/outputs/apk/release/app-release.apk
